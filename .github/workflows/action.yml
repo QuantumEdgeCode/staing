@@ -20,8 +20,8 @@ jobs:
         with:
           server_address: smtp.mxhichina.com
           server_port: 465
-          username: mark-de@aiepn.com
-          password: pcnb?Qdfbn$#546cs_}jfh
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
           subject: Shanghai Weather Report (${{env.REPORT_DATE}})
           body: file://result.html
           to: news@aiepn.com
