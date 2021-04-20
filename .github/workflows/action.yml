@@ -25,5 +25,5 @@ jobs:
           subject: Shanghai Weather Report (${{env.REPORT_DATE}})
           body: file://result.html
           to: news@aiepn.com
-          from: nd
+          from: 气象每日快报
           content_type: text/html
