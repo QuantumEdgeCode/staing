@@ -18,12 +18,12 @@ jobs:
       - name: 'Send mail'
         uses: dawidd6/action-send-mail@master
         with:
-          server_address: smtp.mxhichina.com
+          server_address: smtp-mail.outlook.com
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: Jingzhou Weather Report (${{env.REPORT_DATE}})
           body: file://result.html
-          to: news@aiepn.com
-          from: 气象每日快报
+          to: ${{ secrets.MAIL_to }}
+          from: 气象每日快报/JingZhou
           content_type: text/html
