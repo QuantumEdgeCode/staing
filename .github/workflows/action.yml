@@ -24,6 +24,6 @@ jobs:
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: 荆州每日天气 (${{env.REPORT_DATE}})
           body: file://result.html
-          to: ${{ secrets.MAIL_to }}
+          to: o-lq@outlook.com
           from: 气象每日快报/JingZhou
           content_type: text/html
