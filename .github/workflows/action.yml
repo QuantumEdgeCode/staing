@@ -18,8 +18,8 @@ jobs:
       - name: 'Send mail'
         uses: dawidd6/action-send-mail@master
         with:
-          server_address: outlook.office365.com
-          server_port: 995
+          server_address: smtp-mail.outlook.com
+          server_port: 587
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: 荆州每日天气 (${{env.REPORT_DATE}})
