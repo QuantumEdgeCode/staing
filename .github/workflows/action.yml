@@ -29,7 +29,7 @@ jobs:
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: 荆州每日天气 (${{env.REPORT_DATE}})
           body: |
-          Github来源ip: ${{ env.IP_ADDRESS }}
+            IP Address: ${{ env.IP_ADDRESS }}
             file://result.html
           to: ${{ secrets.MAIL_TO }}
           from: 气象每日快报/JingZhou
