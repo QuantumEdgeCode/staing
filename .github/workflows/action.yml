@@ -3,7 +3,7 @@ name: 'GitHub Actions Weather Bot'
 on:
   push:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '0 6 * * *'
 
 jobs:
   bot:
@@ -15,6 +15,8 @@ jobs:
         run: bash ./weather.sh
       - name: 'Get Date'
         run: echo "REPORT_DATE=$(TZ=':Asia/Shanghai' date '+%Y-%m-%d %T')" >> $GITHUB_ENV
+      - name: 'Get IP Address'
+        run: echo "IP_ADDRESS=$(curl -s https://api64.ipify.org?format=json | jq -r '.ip')" >> $GITHUB_ENV
       - name: 'Send mail'
         uses: dawidd6/action-send-mail@master
         with:
@@ -23,7 +25,9 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: 荆州每日天气 (${{env.REPORT_DATE}})
-          body: file://result.html
+          body: |
+          IP Address: ${{ env.IP_ADDRESS }}
+            file://result.html
           to: ${{ secrets.MAIL_TO }}
           from: 气象每日快报/JingZhou
           content_type: text/html
