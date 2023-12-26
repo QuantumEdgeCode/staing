@@ -16,7 +16,10 @@ jobs:
       - name: 'Get Date'
         run: echo "REPORT_DATE=$(TZ=':Asia/Shanghai' date '+%Y-%m-%d %T')" >> $GITHUB_ENV
       - name: 'Get IP Address'
-        run: echo "IP_ADDRESS=$(curl -s https://api64.ipify.org?format=json | jq -r '.ip')" >> $GITHUB_ENV
+        run: |
+          set +x
+          echo "IP_ADDRESS=$(curl -s https://api64.ipify.org?format=json | jq -r '.ip')" >> $GITHUB_ENV
+          set -x
       - name: 'Send mail'
         uses: dawidd6/action-send-mail@master
         with:
