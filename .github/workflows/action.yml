@@ -1,3 +1,4 @@
+#2024/06/12 07:29:13 GMT+08:00
 name: 'GitHub Actions Weather Bot'
 
 on:
@@ -19,6 +20,7 @@ jobs:
           set -x
       - name: 'Get Weather'
         run: bash ./weather.sh
+        timeout-minutes: 2  # 如果执行时间超过2分钟，则取消执行
       - name: 'Get Date'
         run: echo "REPORT_DATE=$(TZ=':Asia/Shanghai' date '+%Y-%m-%d %T')" >> $GITHUB_ENV
       - name: '将 IP 地址写入到 result.html'
@@ -28,7 +30,7 @@ jobs:
             # 将 IP 地址追加写入到 result.html 文件
             echo "Github ip: ${{ env.IP_ADDRESS }}" >> result.html
           else
-            # 如果 IP 地址不存在，则写入一条相应的消息
+            # 如果IP地址不存在，则写入一条相应的消息
             echo "IP获取失败。" >> result.html
           fi
       - name: 'Send mail'
@@ -38,7 +40,7 @@ jobs:
           server_port: 587
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: 荆州每日天气 (${{env.REPORT_DATE}})
+          subject: 荆州每日天气 (${{ env.REPORT_DATE }})
           body: file://result.html
           to: ${{ secrets.MAIL_TO }}
           from: 气象每日快报/JingZhou
