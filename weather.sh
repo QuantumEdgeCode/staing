@@ -1,3 +1,4 @@
+#2024/06/15 07:02:45 GMT+08:00
 #!/bin/sh
 
 set -eux
@@ -11,7 +12,6 @@ UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Ge
 
 for CITY in "${CITIES[@]}"
 do
-  echo "获取 ${CITY} 的天气预报..." >> result.html
   curl -L \
     -H "Accept-Language: $LANGUAGE" \
     -H "User-Agent: $UA" \
