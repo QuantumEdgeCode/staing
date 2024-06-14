@@ -2,12 +2,20 @@
 
 set -eux
 
-CITY=Jingzhou
+CITIES=("Beijing" "Shanghai" "Wuhan" "Hangzhou" "London")
 LANGUAGE="zh-CN"
-UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
+UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 
-curl -L \
-  -H "Accept-Language: $LANGUAGE" \
-  -H "User-Agent: $UA" \
-  -o result.html \
-  "wttr.in/$CITY?format=4&m"
+# 清空result.html文件
+> result.html
+
+for CITY in "${CITIES[@]}"
+do
+  echo "获取 ${CITY} 的天气预报..." >> result.html
+  curl -L \
+    -H "Accept-Language: $LANGUAGE" \
+    -H "User-Agent: $UA" \
+    -o - \
+    "wttr.in/${CITY}?format=4&m" >> result.html
+  echo "" >> result.html
+done
