@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 import math
+import platform
 from datetime import datetime
 
 # 从 result.txt 读取数据
@@ -19,18 +20,15 @@ def parse_weather(data_raw):
         if not line.strip():
             continue
         
-        # 提取中文名（第一个空格前的内容）
         cn_name = line.split(' ')[0]
         cities.append(cn_name)
         
-        # 提取温度
         temp_match = re.search(r'🌡️\+(\d+)°C', line)
         if temp_match:
             temps.append(int(temp_match.group(1)))
         else:
             temps.append(None)
         
-        # 提取风速
         wind_match = re.search(r'🌬️[↗↘↙↖↑↓←→](\d+)km/h', line)
         if wind_match:
             winds.append(int(wind_match.group(1)))
@@ -53,8 +51,41 @@ for city, temp, wind, valid in zip(cities, temps, winds, has_data):
         filtered_temps.append(temp)
         filtered_winds.append(wind)
 
-# 设置中文字体
-plt.rcParams['font.sans-serif'] = ['SimHei', 'DejaVu Sans']
+# 设置中文字体 - 自动检测系统可用字体
+import matplotlib.font_manager as fm
+
+def find_chinese_font():
+    """查找系统中可用的中文字体"""
+    # Linux 常见中文字体
+    font_candidates = [
+        'WenQuanYi Zen Hei',      # fonts-wqy-zenhei
+        'WenQuanYi Micro Hei',    # fonts-wqy-microhei
+        'Noto Sans CJK SC',       # fonts-noto-cjk
+        'Noto Sans SC',           # fonts-noto
+        'AR PL UMing CN',         # fonts-arphic-uming
+        'AR PL UKai CN',          # fonts-arphic-ukai
+        'SimHei',                 # Windows
+        'Microsoft YaHei',        # Windows
+        'PingFang SC',            # macOS
+        'Heiti SC',               # macOS
+        'STHeiti',                # macOS
+        'DejaVu Sans',            # 备用
+    ]
+    
+    available_fonts = [f.name for f in fm.fontManager.ttflist]
+    
+    for font in font_candidates:
+        if font in available_fonts:
+            return font
+    
+    # 如果都没找到，使用默认字体
+    print("⚠️ 警告: 未找到中文字体，图表中文可能显示为方块")
+    return 'DejaVu Sans'
+
+chinese_font = find_chinese_font()
+print(f"✅ 使用字体: {chinese_font}")
+
+plt.rcParams['font.sans-serif'] = [chinese_font, 'DejaVu Sans']
 plt.rcParams['axes.unicode_minus'] = False
 
 # 获取当前日期作为文件名时间戳
@@ -201,6 +232,7 @@ print(f"   总城市数: {len(cities)}")
 print(f"   有效数据: {len(filtered_cities)}")
 print(f"   数据缺失: {len(missing_cities)} ({', '.join(missing_cities)})")
 print(f"   当前时间: {today_display}")
+print(f"   使用字体: {chinese_font}")
 print(f"   生成图片:")
 print(f"     - weather_overview_{file_date}.png (总览)")
 print(f"     - weather_temp_page*_{file_date}.png (温度排名分页)")
