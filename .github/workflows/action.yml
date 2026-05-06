@@ -1,4 +1,4 @@
-name: 'GitHub Actions Weather Bot'
+name: 'GitHub Actions 气象机器人'
 
 on:
   push:
@@ -7,26 +7,40 @@ on:
     - cron: '0 21 * * *'
 
 jobs:
-  bot:
+  气象任务:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout codes'
+      - name: '检出代码'
         uses: actions/checkout@v1
       
-      - name: 'Get IP Address'
+      - name: '安装 Python'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: '安装依赖'
+        run: |
+          pip install matplotlib numpy
+          sudo apt-get update
+          sudo apt-get install -y fonts-wqy-zenhei
+      
+      - name: '获取 IP 地址'
         run: |
           set +x
           echo "IP_ADDRESS=$(curl -s https://api64.ipify.org?format=json | jq -r '.ip')" >> $GITHUB_ENV
           set -x
       
-      - name: 'Get Weather'
+      - name: '获取天气数据'
         run: bash ./weather.sh
         timeout-minutes: 10
       
-      - name: 'Get Date'
+      - name: '获取日期时间'
         run: echo "REPORT_DATE=$(TZ=':Asia/Shanghai' date '+%Y-%m-%d %T')" >> $GITHUB_ENV
       
-      - name: '将 IP 地址写入到 result.txt'
+      - name: '生成天气图表'
+        run: python 天气表专员.py
+      
+      - name: '写入 IP 地址到结果文件'
         run: |
           if [ -n "${IP_ADDRESS}" ]; then
             echo "Github ip: ${{ env.IP_ADDRESS }}" >> result.txt
@@ -34,13 +48,39 @@ jobs:
             echo "IP获取失败。" >> result.txt
           fi
       
-      - name: '读取 TXT 内容并发送邮件'
+      - name: '生成统计信息'
         run: |
-          echo "TXT_CONTENT<<EOF" >> $GITHUB_ENV
-          cat result.txt >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          total=$(wc -l < result.txt)
+          echo "TOTAL=$((total - 1))" >> $GITHUB_ENV
+          
+          missing_count=$(grep -cE '^\S+ \S+$' result.txt || true)
+          missing_list=$(grep -E '^\S+ \S+$' result.txt | awk '{print $1}' | paste -sd ', ')
+          echo "MISSING_COUNT=${missing_count}" >> $GITHUB_ENV
+          echo "MISSING_LIST=${missing_list}" >> $GITHUB_ENV
+          
+          valid_count=$((total - 1 - missing_count))
+          echo "VALID_COUNT=${valid_count}" >> $GITHUB_ENV
       
-      - name: 'Send mail'
+      - name: '构建邮件正文'
+        run: |
+          file_date=$(TZ=':Asia/Shanghai' date '+%Y-%m-%d')
+          
+          cat result.txt > email_body.txt
+          echo "" >> email_body.txt
+          echo "---" >> email_body.txt
+          echo "📊 统计汇总:" >> email_body.txt
+          echo "   数据来源: result.txt" >> email_body.txt
+          echo "   总城市数: ${TOTAL}" >> email_body.txt
+          echo "   有效数据: ${VALID_COUNT}" >> email_body.txt
+          echo "   数据缺失: ${MISSING_COUNT} (${MISSING_LIST})" >> email_body.txt
+          echo "   当前时间: ${{ env.REPORT_DATE }}" >> email_body.txt
+          echo "" >> email_body.txt
+          echo "📎 附件说明:" >> email_body.txt
+          echo "   - weather_overview_${file_date}.png (温度+风速总览图)" >> email_body.txt
+          echo "   - weather_temp_page*_${file_date}.png (温度排名分页)" >> email_body.txt
+          echo "   - weather_wind_page*_${file_date}.png (风速排名分页)" >> email_body.txt
+      
+      - name: '发送邮件'
         uses: dawidd6/action-send-mail@master
         with:
           server_address: smtp.gmail.com
@@ -51,5 +91,6 @@ jobs:
           subject: 气象快报 (${{ env.REPORT_DATE }})
           to: ${{ secrets.MAIL_TO }}
           from: 气象快报 <${{ secrets.MAIL_USERNAME }}>
-          body: ${{ env.TXT_CONTENT }}
+          body: file://email_body.txt
+          attachments: weather_overview_*.png,weather_temp_page*_*.png,weather_wind_page*_*.png
           convert_markdown: false
