@@ -7,7 +7,7 @@ on:
     - cron: '0 21 * * *'
 
 jobs:
-  气象任务:
+  weather_bot:
     runs-on: ubuntu-latest
     steps:
       - name: '检出代码'
