@@ -1,5 +1,5 @@
 # 全球主要城市天气监测系统
-[https://github.com/QuantumEdgeCode/staing/edit/main/README.md](https://raw.githubusercontent.com/QuantumEdgeCode/staing/refs/heads/main/README.md)
+https://raw.githubusercontent.com/QuantumEdgeCode/staing/refs/heads/main/README.md
 ## 📖 项目简介
 
 基于 GitHub Actions 的自动化天气监测系统，每日定时获取全球 **56个主要城市** 的天气数据，生成可视化图表并通过邮件发送。
