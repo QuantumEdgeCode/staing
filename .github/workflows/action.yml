@@ -26,19 +26,18 @@ jobs:
       - name: 'Get Date'
         run: echo "REPORT_DATE=$(TZ=':Asia/Shanghai' date '+%Y-%m-%d %T')" >> $GITHUB_ENV
       
-      - name: '将 IP 地址写入到 result.html'
+      - name: '将 IP 地址写入到 result.txt'
         run: |
           if [ -n "${IP_ADDRESS}" ]; then
-            echo "Github ip: ${{ env.IP_ADDRESS }}" >> result.html
+            echo "Github ip: ${{ env.IP_ADDRESS }}" >> result.txt
           else
-            echo "IP获取失败。" >> result.html
+            echo "IP获取失败。" >> result.txt
           fi
       
-      - name: '读取 HTML 内容并发送邮件'
+      - name: '读取 TXT 内容并发送邮件'
         run: |
-          # 读取 result.html 内容并设置为环境变量
-          echo "HTML_CONTENT<<EOF" >> $GITHUB_ENV
-          cat result.html >> $GITHUB_ENV
+          echo "TXT_CONTENT<<EOF" >> $GITHUB_ENV
+          cat result.txt >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
       
       - name: 'Send mail'
@@ -46,11 +45,11 @@ jobs:
         with:
           server_address: smtp.gmail.com
           server_port: 465
-          secure: true  # 添加这个，SSL 连接需要
+          secure: true
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: 气象快报 (${{ env.REPORT_DATE }})
           to: ${{ secrets.MAIL_TO }}
-          from: 气象快报 <${{ secrets.MAIL_USERNAME }}>  # 修正格式
-          html_body: ${{ env.HTML_CONTENT }}  # 使用 html_body 而不是 body + content_type
-          convert_markdown: false  # 如果内容已经是 HTML，不要转换
+          from: 气象快报 <${{ secrets.MAIL_USERNAME }}>
+          body: ${{ env.TXT_CONTENT }}
+          convert_markdown: false
