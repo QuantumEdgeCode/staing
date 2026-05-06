@@ -146,7 +146,7 @@ UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Ge
 
 #### 🌡️ 天气总览图
 
-![天气总览图](https://raw.githubusercontent.com/QuantumEdgeCode/staing/refs/heads/main/imges/weather_overview_2026-05-07.png)
+![天气总览图](imges/weather_overview_2026-05-07.png)
 
 #### 🔥 温度排名
 
