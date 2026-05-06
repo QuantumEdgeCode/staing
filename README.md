@@ -140,13 +140,13 @@ UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Ge
 上海 Shanghai 🌤️ 🌡️+18°C 🌬️↖16km/h
 武汉 Wuhan 🌦️ 🌡️+25°C 🌬️←9km/h
 ...
-```
+
 
 ### 图表输出
 
 #### 🌡️ 天气总览图
 
-![天气总览图](imges/weather_overview_2026-05-07.png)
+![天气总览图](https://raw.githubusercontent.com/QuantumEdgeCode/staing/refs/heads/main/imges/weather_overview_2026-05-07.png)
 
 #### 🔥 温度排名
 
